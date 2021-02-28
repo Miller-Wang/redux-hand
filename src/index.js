@@ -1,7 +1,6 @@
 import React from "react";
 import ReactDom from "react-dom";
-import { createStore } from "redux";
-// import { createStore } from "./redux";
+import { createStore, bindActionCreators } from "redux";
 
 // 派发动作
 const INCREMENT = "INCREMENT";
@@ -24,6 +23,15 @@ const reducer = (state = initState, action) => {
 // 根据reducer创建store
 let store = createStore(reducer);
 
+function add() {
+  return { type: INCREMENT };
+}
+function minus() {
+  return { type: DECREMENT };
+}
+const actions = { add, minus };
+const boundActions = bindActionCreators(actions, store.dispatch);
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -31,7 +39,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    // 订阅
+    // 组件挂载时订阅sotre
     this.unsubscribe = store.subscribe(() =>
       this.setState({ number: store.getState().number })
     );
@@ -43,13 +51,19 @@ class App extends React.Component {
 
   render() {
     return (
-      <div>
-        <p>{store.getState().number}</p>
-        <button title="加" onClick={() => store.dispatch({ type: INCREMENT })}>
+      <div style={{ margin: "30px" }}>
+        <h2>{store.getState().number}</h2>
+        <button title="加" onClick={boundActions.add}>
           ＋
         </button>
-        <button title="减" onClick={() => store.dispatch({ type: DECREMENT })}>
+        <button title="减" onClick={boundActions.minus}>
           －
+        </button>
+        <button
+          title="异步加一"
+          onClick={() => setTimeout(boundActions.add, 1000)}
+        >
+          异步＋
         </button>
       </div>
     );
