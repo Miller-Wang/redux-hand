@@ -1,32 +1,14 @@
-import React, { Component } from "react";
-import { bindActionCreators } from "../redux";
-import actions from "../store/actions/counter2";
-import store from "../store";
-const boundActions = bindActionCreators(actions, store.dispatch);
-export default class Counter extends Component {
-  unsubscribe;
-  constructor(props) {
-    super(props);
-    this.state = { number: 0 };
-  }
-  componentDidMount() {
-    this.unsubscribe = store.subscribe(() =>
-      this.setState({ number: store.getState().counter2.number })
-    );
-  }
-  componentWillUnmount() {
-    this.unsubscribe();
-  }
-  render() {
-    return (
-      <div>
-        <p>{this.state.number}</p>
-        <button onClick={boundActions.add2}>+</button>
-        <button onClick={boundActions.minus2}>-</button>
-        <button onClick={() => setTimeout(boundActions.add2, 1000)}>
-          1秒后加1
-        </button>
-      </div>
-    );
-  }
-}
+import React from "react";
+import { useSelector, useDispatch } from "../react-redux";
+const Counter2 = (props) => {
+  const counter2 = useSelector((state) => state.counter2);
+  const dispatch = useDispatch();
+  return (
+    <div>
+      <p>{counter2.number}</p>
+      <button onClick={() => dispatch({ type: "ADD2" })}>+</button>
+      <button onClick={() => dispatch({ type: "MINUS2" })}>-</button>
+    </div>
+  );
+};
+export default Counter2;
